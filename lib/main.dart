@@ -9,50 +9,76 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(title: const Text('Três Botões')),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Botão 1
-              ElevatedButton(
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Clicou no Botão 1!')),
-                  );
-                },
-                child: const Text('Botão 1'),
+    return const MaterialApp(
+      home: MinhaTela(),
+    );
+  }
+}
+
+// 1. Mudamos para StatefulWidget para que a tela consiga guardar estado (memória)
+class MinhaTela extends StatefulWidget {
+  const MinhaTela({super.key});
+
+  @override
+  State<MinhaTela> createState() => _MinhaTelaState();
+}
+
+class _MinhaTelaState extends State<MinhaTela> {
+  // 2. Variável de controle: começa como falsa (botão escondido)
+  bool _mostrarTerceiroBotao = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Exemplo Botão Dinâmico')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Botão 1
+            ElevatedButton(
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Clicou no Botão 1')),
+                );
+              },
+              child: const Text('Botão 1'),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Botão 2 (Perigo)
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
               ),
+              onPressed: () {
+                // 3. Atualiza o estado da tela
+                setState(() {
+                  _mostrarTerceiroBotao = true; // Altera para true
+                });
+              },
+              child: const Text('Botão 2 (Perigo)'),
+            ),
 
-              const SizedBox(height: 20), // Espaçamento
-
-              // Botão 2
+            // 4. Renderização condicional: Só desenha na tela se _mostrarTerceiroBotao for true
+            if (_mostrarTerceiroBotao) ...[
+              const SizedBox(height: 20),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
+                  backgroundColor: Colors.orange,
                   foregroundColor: Colors.white,
                 ),
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Clicou no Botão 2!')),
+                    const SnackBar(content: Text('Você encontrou o Botão 3!')),
                   );
                 },
-                child: const Text('Botão 2 (Perigo)'),
+                child: const Text('Botão 3 (Surpresa!)'),
               ),
-
-              const SizedBox(height: 20), // Espaçamento
-
-              OutlinedButton(
-                onPressed: () {
-                  print('Borda clicada!');
-                },
-                child: const Text('Detalhes'),
-              )
-
             ],
-          ),
+          ],
         ),
       ),
     );
