@@ -1,83 +1,169 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MainApp());
+  runApp(const MeuAppComidas());
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+class MeuAppComidas extends StatelessWidget {
+  const MeuAppComidas({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: MinhaTela(),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'App de Alimentos',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
+        useMaterial3: true,
+      ),
+      home: const TelaListaAlimentos(),
     );
   }
 }
 
-// 1. Mudamos para StatefulWidget para que a tela consiga guardar estado (memória)
-class MinhaTela extends StatefulWidget {
-  const MinhaTela({super.key});
+// 1. Modelo de dados para estruturar as informações de cada alimento
+class Alimento {
+  final String nome;
+  final String preco;
+  final String emoji;
+  final String descricao;
 
-  @override
-  State<MinhaTela> createState() => _MinhaTelaState();
+  Alimento({
+    required this.nome,
+    required this.preco,
+    required this.emoji,
+    required this.descricao,
+  });
 }
 
-class _MinhaTelaState extends State<MinhaTela> {
-  // 2. Variável de controle: começa como falsa (botão escondido)
-  bool _mostrarTerceiroBotao = false;
+// 2. Tela Principal: Lista de Alimentos
+class TelaListaAlimentos extends StatelessWidget {
+  const TelaListaAlimentos({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // Dados fictícios do cardápio
+    final List<Alimento> listaAlimentos = [
+      Alimento(
+        nome: 'Hambúrguer Artesanal',
+        preco: 'R\$ 28,00',
+        emoji: '🍔',
+        descricao: 'Pão brioche, 180g de carne bovina, queijo cheddar e molho da casa.',
+      ),
+      Alimento(
+        nome: 'Pizza Pepperoni',
+        preco: 'R\$ 45,00',
+        emoji: '🍕',
+        descricao: 'Massa artesanal com molho de tomate, mussarela e fatias de pepperoni.',
+      ),
+      Alimento(
+        nome: 'Combo de Sushi',
+        preco: 'R\$ 60,00',
+        emoji: '🍣',
+        descricao: '12 peças variadas incluindo hots, niguiris e uramakis frescos.',
+      ),
+      Alimento(
+        nome: 'Salada Caesar',
+        preco: 'R\$ 22,00',
+        emoji: '🥗',
+        descricao: 'Alface americana, tiras de frango grelhado, croutons e molho caesar.',
+      ),
+    ];
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Cardápio'),
+        backgroundColor: Colors.deepOrange,
+        foregroundColor: Colors.white,
+      ),
+      body: ListView.builder(
+        itemCount: listaAlimentos.length,
+        itemBuilder: (context, index) {
+          final alimento = listaAlimentos[index];
+          
+          return Card(
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: ListTile(
+              leading: Text(alimento.emoji, style: const TextStyle(fontSize: 32)),
+              title: Text(
+                alimento.nome, 
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text(
+                alimento.preco, 
+                style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+              ),
+              trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+              onTap: () {
+                // Navegação para a Tela de Detalhes enviando o alimento selecionado
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => TelaDetalhesAlimento(alimento: alimento),
+                  ),
+                );
+              },
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+// 3. Tela de Detalhes do Alimento Selecionado
+class TelaDetalhesAlimento extends StatelessWidget {
+  final Alimento alimento;
+
+  const TelaDetalhesAlimento({super.key, required this.alimento});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Exemplo Botão Dinâmico')),
-      body: Center(
+      appBar: AppBar(
+        title: Text(alimento.nome),
+        backgroundColor: Colors.deepOrange,
+        foregroundColor: Colors.white,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Botão 1
-            ElevatedButton(
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Clicou no Botão 1')),
-                );
-              },
-              child: const Text('Botão 1'),
+            Text(alimento.emoji, style: const TextStyle(fontSize: 100)),
+            const SizedBox(height: 16),
+            Text(
+              alimento.nome,
+              style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
             ),
-
-            const SizedBox(height: 20),
-
-            // Botão 2 (Perigo)
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
-              ),
-              onPressed: () {
-                // 3. Atualiza o estado da tela
-                setState(() {
-                  _mostrarTerceiroBotao = true; // Altera para true
-                });
-              },
-              child: const Text('Botão 2 (Perigo)'),
+            const SizedBox(height: 8),
+            Text(
+              alimento.preco,
+              style: const TextStyle(fontSize: 22, color: Colors.green, fontWeight: FontWeight.bold),
             ),
-
-            // 4. Renderização condicional: Só desenha na tela se _mostrarTerceiroBotao for true
-            if (_mostrarTerceiroBotao) ...[
-              const SizedBox(height: 20),
-              ElevatedButton(
+            const SizedBox(height: 16),
+            Text(
+              alimento.descricao,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 16, color: Colors.grey),
+            ),
+            const Spacer(),
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
+                  backgroundColor: Colors.deepOrange,
                   foregroundColor: Colors.white,
                 ),
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Você encontrou o Botão 3!')),
+                    SnackBar(content: Text('${alimento.nome} adicionado ao pedido!')),
                   );
                 },
-                child: const Text('Botão 3 (Surpresa!)'),
+                child: const Text('Adicionar ao Pedido', style: TextStyle(fontSize: 18)),
               ),
-            ],
+            ),
           ],
         ),
       ),
