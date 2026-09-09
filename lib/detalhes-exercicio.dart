@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'main.dart'; // Importa o modelo Exercicio
-
+import 'opcao-exercicios.dart';
 class TelaDetalhesExercicio extends StatelessWidget {
   final Exercicio exercicio;
 
