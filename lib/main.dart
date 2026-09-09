@@ -1,171 +1,112 @@
 import 'package:flutter/material.dart';
+import 'detalhes-exercicio.dart'; // Importa a tela de detalhes
 
 void main() {
-  runApp(const MeuAppComidas());
+  runApp(const MeuAppAcademia());
 }
 
-class MeuAppComidas extends StatelessWidget {
-  const MeuAppComidas({super.key});
+class MeuAppAcademia extends StatelessWidget {
+  const MeuAppAcademia({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'App de Alimentos',
+      title: 'App Treino',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
         useMaterial3: true,
       ),
-      home: const TelaListaAlimentos(),
+      home: const TelaListaExercicios(),
     );
   }
 }
 
-// 1. Modelo de dados para estruturar as informações de cada alimento
-class Alimento {
+// Modelo de dados para os exercícios
+class Exercicio {
   final String nome;
-  final String preco;
+  final String grupoMuscular;
+  final String series;
   final String emoji;
   final String descricao;
 
-  Alimento({
+  Exercicio({
     required this.nome,
-    required this.preco,
+    required this.grupoMuscular,
+    required this.series,
     required this.emoji,
     required this.descricao,
   });
 }
 
-// 2. Tela Principal: Lista de Alimentos
-class TelaListaAlimentos extends StatelessWidget {
-  const TelaListaAlimentos({super.key});
+class TelaListaExercicios extends StatelessWidget {
+  const TelaListaExercicios({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Dados fictícios do cardápio
-    final List<Alimento> listaAlimentos = [
-      Alimento(
-        nome: 'Hambúrguer Artesanal',
-        preco: 'R\$ 28,00',
-        emoji: '🍔',
-        descricao: 'Pão brioche, 180g de carne bovina, queijo cheddar e molho da casa.',
+    final List<Exercicio> listaExercicios = [
+      Exercicio(
+        nome: 'Supino Reto',
+        grupoMuscular: 'Peitoral',
+        series: '4 séries x 10 a 12 repetições',
+        emoji: '🏋️‍♂️',
+        descricao: 'Deite no banco plano, segure a barra na largura dos ombros e desça até o peito com controle.',
       ),
-      Alimento(
-        nome: 'Pizza Pepperoni',
-        preco: 'R\$ 45,00',
-        emoji: '🍕',
-        descricao: 'Massa artesanal com molho de tomate, mussarela e fatias de pepperoni.',
+      Exercicio(
+        nome: 'Agachamento Livre',
+        grupoMuscular: 'Pernas / Glúteos',
+        series: '4 séries x 10 repetições',
+        emoji: '🦵',
+        descricao: 'Posicione a barra sobre os trapézios, agache mantendo a coluna ereta até o ângulo de 90 graus.',
       ),
-      Alimento(
-        nome: 'Combo de Sushi',
-        preco: 'R\$ 60,00',
-        emoji: '🍣',
-        descricao: '12 peças variadas incluindo hots, niguiris e uramakis frescos.',
+      Exercicio(
+        nome: 'Puxada Frontal',
+        grupoMuscular: 'Costas',
+        series: '3 séries x 12 repetições',
+        emoji: '💪',
+        descricao: 'Sente-se no aparelho, puxe a barra em direção ao peito contraindo bem a musculatura das costas.',
       ),
-      Alimento(
-        nome: 'Salada Caesar',
-        preco: 'R\$ 22,00',
-        emoji: '🥗',
-        descricao: 'Alface americana, tiras de frango grelhado, croutons e molho caesar.',
+      Exercicio(
+        nome: 'Corrida na Esteira',
+        grupoMuscular: 'Cardio',
+        series: '20 minutos em ritmo moderado',
+        emoji: '🏃‍♂️',
+        descricao: 'Mantenha a postura ereta e o ritmo constante para trabalhar a resistência cardiorrespiratória.',
       ),
     ];
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Cardápio'),
-        backgroundColor: Colors.deepOrange,
+        title: const Text('Meu Treino do Dia'),
+        backgroundColor: Colors.blueAccent,
         foregroundColor: Colors.white,
       ),
       body: ListView.builder(
-        itemCount: listaAlimentos.length,
+        itemCount: listaExercicios.length,
         itemBuilder: (context, index) {
-          final alimento = listaAlimentos[index];
-          
+          final exercicio = listaExercicios[index];
+
           return Card(
             margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: ListTile(
-              leading: Text(alimento.emoji, style: const TextStyle(fontSize: 32)),
+              leading: Text(exercicio.emoji, style: const TextStyle(fontSize: 32)),
               title: Text(
-                alimento.nome, 
+                exercicio.nome,
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
-              subtitle: Text(
-                alimento.preco, 
-                style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
-              ),
+              subtitle: Text('${exercicio.grupoMuscular} • ${exercicio.series}'),
               trailing: const Icon(Icons.arrow_forward_ios, size: 16),
               onTap: () {
-                // Navegação para a Tela de Detalhes enviando o alimento selecionado
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => TelaDetalhesAlimento(alimento: alimento),
+                    builder: (context) => TelaDetalhesExercicio(exercicio: exercicio),
                   ),
                 );
               },
             ),
           );
         },
-      ),
-    );
-  }
-}
-
-// 3. Tela de Detalhes do Alimento Selecionado
-class TelaDetalhesAlimento extends StatelessWidget {
-  final Alimento alimento;
-
-  const TelaDetalhesAlimento({super.key, required this.alimento});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(alimento.nome),
-        backgroundColor: Colors.deepOrange,
-        foregroundColor: Colors.white,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(alimento.emoji, style: const TextStyle(fontSize: 100)),
-            const SizedBox(height: 16),
-            Text(
-              alimento.nome,
-              style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              alimento.preco,
-              style: const TextStyle(fontSize: 22, color: Colors.green, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              alimento.descricao,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 16, color: Colors.grey),
-            ),
-            const Spacer(),
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepOrange,
-                  foregroundColor: Colors.white,
-                ),
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('${alimento.nome} adicionado ao pedido!')),
-                  );
-                },
-                child: const Text('Adicionar ao Pedido', style: TextStyle(fontSize: 18)),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
